@@ -1,0 +1,10 @@
+#PBS -q serial
+#PBS -l walltime=07:00:00
+#PBS -N test
+#PBS -e test.$PBS_JOBID.err
+#PBS -o test.$PBS_JOBID.out
+#PBS -A m2218
+
+cd /project/projectdirs/astro250/doris/halo/halo_find
+python mean_shift.py
+
