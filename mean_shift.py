@@ -12,7 +12,7 @@ y = ad[("all","particle_position_y")]
 z = ad[("all","particle_position_z")]
 X= np.array([x,y,z])
 X = X.T
-bandwidth = estimate_bandwidth(X, quantile=0.2, n_samples=shape(X)[0])
+bandwidth = estimate_bandwidth(X, quantile=0.2, n_samples=np.shape(X)[0])
 ms = MeanShift(bandwidth=bandwidth, bin_seeding=True)
 ms.fit(X)
 labels = ms.labels_
