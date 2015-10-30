@@ -10,8 +10,7 @@ from sklearn.grid_search import GridSearchCV
 DEBUG= True
 def debug(s,n=""):
     if DEBUG:
-        print s
-        print n
+        print s , n
 def compute_rcm(n_cluster,centroids):
     #since all the particles have the same mass, the center of mass is  just the arithmetic average weighted by the number of particles in each cluster 
     numerator = 0
@@ -32,19 +31,19 @@ def compute_avrg_rad(n_cluster,centroids):
     for i in np.arange(n_cluster):
         numerator += np.linalg.norm(centroids[i]-compute_rcm(n_cluster,centroids))
     return numerator/n_cluster
-def verify_cm_calculation(n_cluster,centroids):
-    fig  = plt.figure()
-    plt.title("xy projection for n_cluster = ".format(n_cluster),fontsize=15)
-    plt.plot(centers[:,0], centers[:,1],'o')
-    rcm = compute_rcm(n_cluster,centroids)
-    plt.plot(rcm[0],rcm[1],"x", color = "red", markersize=13)
-    rad = compute_avrg_rad(n_cluster,centroids)
-    circle1 = plt.Circle((rcm[0],rcm[1]),rad,color='g',fill=False)
-    fig.gca().add_artist(circle1)
-    plt.xlabel("X",fontsize=13)
-    plt.ylabel("Y",fontsize=13)
-    axes().set_aspect('equal', 'datalim')
-    plt.savefig("check{}.png".format(n_cluster))
+#def verify_cm_calculation(n_cluster,centroids):
+#    fig=plt.figure()
+#    plt.title("xy projection for n_cluster = ".format(n_cluster),fontsize=15)
+#    plt.plot(centers[:,0], centers[:,1],'o')
+#    rcm = compute_rcm(n_cluster,centroids)
+#    plt.plot(rcm[0],rcm[1],"x", color = "red", markersize=13)
+#    rad = compute_avrg_rad(n_cluster,centroids)
+#    circle1 = plt.Circle((rcm[0],rcm[1]),rad,color='g',fill=False)
+#    fig.gca().add_artist(circle1)
+#    plt.xlabel("X",fontsize=13)
+#    plt.ylabel("Y",fontsize=13)
+#    axes().set_aspect('equal', 'datalim')
+#    plt.savefig("check{}.png".format(n_cluster))
 debug("Loading Particle Data")
 ds = yt.load("../ds14_scivis_0128_e4_dt04_1.0000")
 ad = ds.all_data()
@@ -56,8 +55,8 @@ m = ad[("all","mass")]
 idx = ad[("all","particle_index")]
 train = []
 test = []
-N = 500
-N_split = 100
+N = 2097152#500
+N_split = 524288#100
 for n in np.arange(N):
     if n >N_split:
         train.append([idx[n],m[n].in_cgs(),x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
@@ -75,20 +74,24 @@ k_range = range(1, 100)
 densities =[]
 densf = open('densities.txt', 'a')
 for k in k_range:
+    debug("{} clusters test".format(k))
     clf = KMeans(n_clusters=k)
     clf.fit(train[:,2:])#ignoring idx and mass 
     centers=clf.cluster_centers_
     labels = clf.labels_
     rad = compute_avrg_rad(k,centers)
-    volume = (4./3.*pi*rad**3)
+    volume = (4./3.*np.pi*rad**3)
     mass = 2.75491975e43 * len(labels)
-    density = mass / volume
-#     print density
-    verify_cm_calculation(k,centers)
+    if k ==1:
+	density =0 #undefined density for point mass
+    else:
+	density = mass / volume
+    #print "density: ", density
+    #verify_cm_calculation(k,centers)
     densities.append(density)
     np.savetxt("centers{}.txt".format(k),centers)
-    np.savetxt("labels{}.txt".format(k),centers)
+    np.savetxt("labels{}.txt".format(k),labels)
 #     print k,"clusters"
 #     print centers
 #     print labels
-    densf.write(density)
+    densf.write(str(density)+"\n")
