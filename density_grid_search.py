@@ -55,8 +55,8 @@ m = ad[("all","mass")]
 idx = ad[("all","particle_index")]
 train = []
 test = []
-N = 2097152#500
-N_split = 524288#100
+N = 500#2097152#500
+N_split = 100#524288#100
 for n in np.arange(N):
     if n >N_split:
         train.append([idx[n],m[n].in_cgs(),x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
@@ -68,6 +68,8 @@ train = np.array(train)
 test = np.array(test)
 debug("training set size : ", np.shape(train))
 debug("testing  set size : ", np.shape(test))
+np.savetxt("test.txt",test)
+np.savetxt("train.txt",train)
 # Explicit Grid Search 
 k_range = range(1, 100)
 # k_scores = []
@@ -76,12 +78,16 @@ densf = open('densities.txt', 'a')
 for k in k_range:
     debug("{} clusters test".format(k))
     clf = KMeans(n_clusters=k)
+    debug(np.shape(train[:,2:]))
     clf.fit(train[:,2:])#ignoring idx and mass 
     centers=clf.cluster_centers_
     labels = clf.labels_
+    debug(np.shape(centers))
+    debug(np.shape(labels))
     rad = compute_avrg_rad(k,centers)
     volume = (4./3.*np.pi*rad**3)
-    mass = 2.75491975e43 * len(labels)
+    N=len(np.where(labels==k)[0])
+    mass = 2.75491975e43 * N
     if k ==1:
 	density =0 #undefined density for point mass
     else:
