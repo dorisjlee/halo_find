@@ -21,27 +21,27 @@ debug("Creating train test split samples")
 m = ad[("all","mass")]
 idx = ad[("all","particle_index")]
 train = []
-test = []
-N = 500#2097152
-N_split = 100#524288
+#test = []
+N = 2097152
+#N_split = 100#100#524288
 for n in np.arange(N):
-    if n >N_split:
-        train.append([idx[n],m[n].in_cgs(),x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
+    #if n >N_split:
+    train.append([idx[n],m[n].in_cgs(),x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
 #         train.append([x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
-    elif n<N_split:
-        test.append([idx[n],m[n].in_cgs(),x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
+#    elif n<N_split:
+#        test.append([idx[n],m[n].in_cgs(),x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
 #         test.append([x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
 train = np.array(train)
-test = np.array(test)
+#test = np.array(test)
 # debug("training set size : ", np.shape(train))
 # debug("testing  set size : ", np.shape(test))
-np.savetxt("test.txt",test)
+#np.savetxt("test.txt",test)
 np.savetxt("train.txt",train)
 # Explicit Grid Search
-k_range = range(1, 250)
+k_range = np.arange(1,1048576,100) #range(1, 250)
 avrg = open('avrg_dens.txt', 'a')
 for k in k_range:
-#     debug("{} clusters test".format(k))
+    debug("{} clusters test".format(k))
     clf = KMeans(n_clusters=k)
 #     debug(np.shape(train[:,2:]))
     clf.fit(train[:,2:])#ignoring idx and mass
