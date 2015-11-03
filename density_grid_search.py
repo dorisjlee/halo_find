@@ -11,39 +11,6 @@ DEBUG= True
 def debug(s,n=""):
     if DEBUG:
         print s , n
-def compute_rcm(n_cluster,centroids):
-    #since all the particles have the same mass, the center of mass is  just the arithmetic average weighted by the number of particles in each cluster 
-    numerator = 0
-    n_tot = 0
-    for i in np.arange(n_cluster):
-        N = len(np.where(labels==i)[0]) #number of particles in each cluster
-#         print "n_clusters:", i 
-#         print "nuumber of particles in each cluster ", N
-#         print "cluster center" , centroids[i]    
-        numerator += centroids[i]*N 
-#         print "numerator: " , numerator
-        n_tot+=N
-    rcm = numerator/n_tot
-    return rcm
-def compute_avrg_rad(n_cluster,centroids):
-    numerator = 0
-    n_tot = 0
-    for i in np.arange(n_cluster):
-        numerator += np.linalg.norm(centroids[i]-compute_rcm(n_cluster,centroids))
-    return numerator/n_cluster
-#def verify_cm_calculation(n_cluster,centroids):
-#    fig=plt.figure()
-#    plt.title("xy projection for n_cluster = ".format(n_cluster),fontsize=15)
-#    plt.plot(centers[:,0], centers[:,1],'o')
-#    rcm = compute_rcm(n_cluster,centroids)
-#    plt.plot(rcm[0],rcm[1],"x", color = "red", markersize=13)
-#    rad = compute_avrg_rad(n_cluster,centroids)
-#    circle1 = plt.Circle((rcm[0],rcm[1]),rad,color='g',fill=False)
-#    fig.gca().add_artist(circle1)
-#    plt.xlabel("X",fontsize=13)
-#    plt.ylabel("Y",fontsize=13)
-#    axes().set_aspect('equal', 'datalim')
-#    plt.savefig("check{}.png".format(n_cluster))
 debug("Loading Particle Data")
 ds = yt.load("../ds14_scivis_0128_e4_dt04_1.0000")
 ad = ds.all_data()
@@ -55,8 +22,8 @@ m = ad[("all","mass")]
 idx = ad[("all","particle_index")]
 train = []
 test = []
-N = 500#2097152#500
-N_split = 100#524288#100
+N = 500#2097152
+N_split = 100#524288
 for n in np.arange(N):
     if n >N_split:
         train.append([idx[n],m[n].in_cgs(),x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
@@ -66,38 +33,51 @@ for n in np.arange(N):
 #         test.append([x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
 train = np.array(train)
 test = np.array(test)
-debug("training set size : ", np.shape(train))
-debug("testing  set size : ", np.shape(test))
+# debug("training set size : ", np.shape(train))
+# debug("testing  set size : ", np.shape(test))
 np.savetxt("test.txt",test)
 np.savetxt("train.txt",train)
-# Explicit Grid Search 
-k_range = range(1, 100)
-# k_scores = []
-densities =[]
-densf = open('densities.txt', 'a')
+# Explicit Grid Search
+k_range = range(1, 250)
+avrg = open('avrg_dens.txt', 'a')
 for k in k_range:
-    debug("{} clusters test".format(k))
+#     debug("{} clusters test".format(k))
     clf = KMeans(n_clusters=k)
-    debug(np.shape(train[:,2:]))
-    clf.fit(train[:,2:])#ignoring idx and mass 
+#     debug(np.shape(train[:,2:]))
+    clf.fit(train[:,2:])#ignoring idx and mass
     centers=clf.cluster_centers_
     labels = clf.labels_
-    debug(np.shape(centers))
-    debug(np.shape(labels))
-    rad = compute_avrg_rad(k,centers)
-    volume = (4./3.*np.pi*rad**3)
-    N=len(np.where(labels==k)[0])
-    mass = 2.75491975e43 * N
+    #Density calculation for each cluster
+    densities =[]
     if k ==1:
-	density =0 #undefined density for point mass
+        density =0 #undefined density for point mass 
+        avrg.write(str(density)+"\n")
     else:
-	density = mass / volume
-    #print "density: ", density
-    #verify_cm_calculation(k,centers)
-    densities.append(density)
+        for i in np.arange(k):
+            numerator = 0
+            n_tot = 0
+            N=len(np.where(labels==i)[0])
+    #             if np.linalg.norm(train[pcl_idx][2:]-centers[i])!=0:
+            for pcl_idx in np.where(labels==i)[0]:
+    #                 if i ==27: print "dist: ",np.linalg.norm(train[pcl_idx][2:]-centers[i])
+                numerator += np.linalg.norm(train[pcl_idx][2:]-centers[i])
+#                 if numerator ==0 : print "identical: ",train[pcl_idx][2:],centers[i],np.where(labels==i)[0]
+    #             if i ==27: print "numerator: " , numerator
+            if numerator !=0 :
+                rad =numerator/N
+                volume = (4./3.*np.pi*rad**3)
+        #             if rad ==0 : print i , rad
+        #             print volume
+                mass = 2.75491975e43 * N
+                density = mass / volume
+            else:#ignore single centroid clusters
+#                 print "centers: ",centers[i]
+#                 print "train: ",train
+                N-=1 #don't count them in the cluster, actually this doesn't matter N is not used anyways 
+                #density=0 #should not append the zero densities this brings down the average
+            if numerator !=0 :densities.append(density)
+        avrg.write(str(np.mean(densities))+"\n")
+    np.savetxt("density{}.txt".format(k),densities)
     np.savetxt("centers{}.txt".format(k),centers)
     np.savetxt("labels{}.txt".format(k),labels)
-#     print k,"clusters"
-#     print centers
-#     print labels
-    densf.write(str(density)+"\n")
+avrg.close()
