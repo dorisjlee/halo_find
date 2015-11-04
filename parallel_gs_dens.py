@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import yt
 import sklearn
@@ -20,30 +21,17 @@ z = ad[("all","particle_position_z")]
 debug("Creating train test split samples")
 m = ad[("all","mass")]
 idx = ad[("all","particle_index")]
-train = []
-#test = []
-N = 2097152
-#N_split = 100#100#524288
-for n in np.arange(N):
-    #if n >N_split:
-    train.append([idx[n],m[n].in_cgs(),x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
-#         train.append([x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
-#    elif n<N_split:
-#        test.append([idx[n],m[n].in_cgs(),x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
-#         test.append([x[n].in_cgs(),y[n].in_cgs(),z[n].in_cgs()])
-train = np.array(train)
-#test = np.array(test)
-# debug("training set size : ", np.shape(train))
-# debug("testing  set size : ", np.shape(test))
-#np.savetxt("test.txt",test)
+N = 50000
+train = np.array([idx[N:],m[N:],x[N:],y[N:],z[N:]]).T
 np.savetxt("train.txt",train)
 # Explicit Grid Search
-k_range = np.arange(1,1048576,100) #range(1, 250)
+k_range =np.arange(1000,20000,1000)
 avrg = open('avrg_dens.txt', 'a')
+timef = open('time.txt','a')
 for k in k_range:
+    start = time.time()
     debug("{} clusters test".format(k))
-    clf = KMeans(n_clusters=k)
-#     debug(np.shape(train[:,2:]))
+    clf = KMeans(n_clusters=k,n_jobs=-2)#n_jobs = -2, all CPUs -1 used
     clf.fit(train[:,2:])#ignoring idx and mass
     centers=clf.cluster_centers_
     labels = clf.labels_
@@ -57,27 +45,19 @@ for k in k_range:
             numerator = 0
             n_tot = 0
             N=len(np.where(labels==i)[0])
-    #             if np.linalg.norm(train[pcl_idx][2:]-centers[i])!=0:
             for pcl_idx in np.where(labels==i)[0]:
-    #                 if i ==27: print "dist: ",np.linalg.norm(train[pcl_idx][2:]-centers[i])
                 numerator += np.linalg.norm(train[pcl_idx][2:]-centers[i])
-#                 if numerator ==0 : print "identical: ",train[pcl_idx][2:],centers[i],np.where(labels==i)[0]
-    #             if i ==27: print "numerator: " , numerator
             if numerator !=0 :
                 rad =numerator/N
                 volume = (4./3.*np.pi*rad**3)
-        #             if rad ==0 : print i , rad
-        #             print volume
                 mass = 2.75491975e43 * N
                 density = mass / volume
-            else:#ignore single centroid clusters
-#                 print "centers: ",centers[i]
-#                 print "train: ",train
-                N-=1 #don't count them in the cluster, actually this doesn't matter N is not used anyways 
-                #density=0 #should not append the zero densities this brings down the average
-            if numerator !=0 :densities.append(density)
+                densities.append(density)
         avrg.write(str(np.mean(densities))+"\n")
     np.savetxt("density{}.txt".format(k),densities)
     np.savetxt("centers{}.txt".format(k),centers)
     np.savetxt("labels{}.txt".format(k),labels)
+    end = time.time()
+    timef.write(str(k)+"		"+ str(end-start)+"\n")
+    print "Time: " , end-start
 avrg.close()
