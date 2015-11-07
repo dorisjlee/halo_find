@@ -1,0 +1,12 @@
+#PBS -q regular
+#PBS -l walltime=00:00:10
+#PBS -N mass
+#PBS -l vmem=20gb
+#PBS -l mem=20gb
+#PBS -e test2.$PBS_JOBID.err
+#PBS -o test2.$PBS_JOBID.out
+#PBS -A m2218
+
+cd /project/projectdirs/astro250/doris/halo/halo_find
+#/global/homes/d/dorislee/anaconda/bin/python mass.py 
+echo $PYTHONPATH
