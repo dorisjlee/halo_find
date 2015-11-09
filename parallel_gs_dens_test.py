@@ -23,13 +23,14 @@ z = ad[("all","particle_position_z")]
 print "Creating train test split samples"
 #m = ad[("all","mass")]
 idx = ad[("all","particle_index")]
+N = 10000
 #N = 2097152
-#train = np.array([idx[N:],x[N:],y[N:],z[N:]]).T
-train = np.array([idx,x,y,z]).T
+train = np.array([idx[N:],x[N:],y[N:],z[N:]]).T
+#train = np.array([idx,x,y,z]).T
 np.savetxt("train.txt",train)
 # Explicit Grid Search
-k_range = np.arange(2000, 21000,1000) 
-#k_range=[2000]
+#k_range = np.arange(2000, 21000,1000) 
+k_range=np.arange(50,1000,100)
 avrg = open('avrg_dens.txt', 'a')
 timef = open('time.txt','a')
 for k in k_range:
