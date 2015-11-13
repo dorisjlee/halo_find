@@ -1,0 +1,10 @@
+#PBS -q regular
+#PBS -l mppwidth=24
+#PBS -l walltime=10:00:00
+#PBS -N 8to11
+#PBS -e $PBS_JOBNAME.$PBS_JOBID.err
+#PBS -o $PBS_JOBNAME.$PBS_JOBID.out
+#PBS -A m2218
+export LD_LIBRARY_PATH=/global/homes/d/dorislee/anaconda/lib:$LD_LIBRARY_PATH
+cd /project/projectdirs/astro250/doris/halo/halo_find/minibatch_kmeans2
+aprun -n 1 /global/homes/d/dorislee/anaconda/bin/python 8to11.py
