@@ -9,6 +9,11 @@ from sklearn.cross_validation import cross_val_score
 #from sklearn.cluster import KMeans
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.grid_search import GridSearchCV
+import sys
+for arg in sys.argv:
+    k=arg
+k = int(k)
+
 print "Loading Particle Data"
 ds = yt.load("../../ds14_scivis_0128_e4_dt04_1.0000")
 ad = ds.all_data()
@@ -31,7 +36,9 @@ np.savetxt("train.txt",train)
 #k_range=np.arange(15000,110000,1000)
 #k_range = np.arange(2550,7000,100)
 #k_range=np.arange(4750,7000,100)
-k_range = np.arange(40000,60000,1000)
+#k_range = np.arange(40000,60000,1000)
+#k_range= np.arange(22000,40000,1000)
+k_range= [k]
 avrg = open('avrg_dens.txt', 'a')
 timef = open('time.txt','a')
 for k in k_range:

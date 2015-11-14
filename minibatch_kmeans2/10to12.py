@@ -26,8 +26,7 @@ train = np.array([idx[N:],x[N:],y[N:],z[N:]]).T
 #train = np.array([idx,x,y,z]).T
 np.savetxt("train.txt",train)
 # Explicit Grid Search
-#k_range = np.arange(80000,110000,1000)
-k_range=[50000] 
+k_range = np.arange(100000,120000,1000) 
 avrg = open('avrg_dens.txt', 'a')
 timef = open('time.txt','a')
 for k in k_range:
