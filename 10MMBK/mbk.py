@@ -15,12 +15,9 @@ ad = ds.all_data()
 x = ad[("all","particle_position_x")]
 y = ad[("all","particle_position_y")]
 z = ad[("all","particle_position_z")]
-print "Creating train test split samples"
 idx = ad[("all","particle_index")]
-N = 1000000
-train = np.array([idx[N:],x[N:],y[N:],z[N:]]).T
+train = np.array([idx,x,y,z]).T
 np.savetxt("train.txt",train)
-# Explicit Grid Search
 avrg = open('avrg_dens.txt', 'a')
 timef = open('time.txt','a')
 start = time.time()
