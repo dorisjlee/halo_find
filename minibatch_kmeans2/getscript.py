@@ -3,7 +3,7 @@ for arg in sys.argv:
     k=arg
 k = int(k)
 print "#PBS -q regular"
-print "#PBS -l mppwidth=24"
+print "#PBS -l mppwidth=1"
 print "#PBS -l walltime=05:00:00"
 print "#PBS -N {}cluster".format(k)
 print "#PBS -e $PBS_JOBNAME.$PBS_JOBID.err"

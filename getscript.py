@@ -4,10 +4,10 @@ for arg in sys.argv:
 nproc = int(nproc)
 print "#PBS -q regular"
 if nproc<24:
-    print "#PBS -l mppwidth=24"
+    print "#PBS -l mppwidth=1"
 else:
     print "#PBS -l mppwidth={}".format((nproc/24)*24)
-print "#PBS -l walltime=05:00:00"
+print "#PBS -l walltime=48:00:00"
 print "#PBS -N {}_test".format(nproc)
 print "#PBS -e sctest.$PBS_JOBID.err"
 print "#PBS -o sctest.$PBS_JOBID.out"

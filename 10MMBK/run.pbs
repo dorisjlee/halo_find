@@ -1,0 +1,10 @@
+#!/bin/bash -l
+#SBATCH -p regular
+#SBATCH -N 1
+#SBATCH -o %j.out
+#SBATCH -e %j.err
+#SBATCH -t 10:00:00
+#SBATCH -J 55000cluster
+export LD_LIBRARY_PATH=/global/homes/d/dorislee/anaconda/lib:$LD_LIBRARY_PATH
+cd /project/projectdirs/astro250/doris/halo/halo_find/10MMBK
+srun -n 1 --unbuffered /global/homes/d/dorislee/anaconda/bin/python mbk.py 55000

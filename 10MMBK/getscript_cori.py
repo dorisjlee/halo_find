@@ -7,7 +7,7 @@ print "#SBATCH -p regular"
 print "#SBATCH -N 1"
 print "#SBATCH -o %j.out"
 print "#SBATCH -e %j.err"
-print "#SBATCH -t 00:05:00"
+print "#SBATCH -t 10:00:00"
 print "#SBATCH -J {}cluster".format(k)
 print "export LD_LIBRARY_PATH=/global/homes/d/dorislee/anaconda/lib:$LD_LIBRARY_PATH"
 print "cd /project/projectdirs/astro250/doris/halo/halo_find/10MMBK" 

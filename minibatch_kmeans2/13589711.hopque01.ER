@@ -1,0 +1,2 @@
+/global/homes/d/dorislee/anaconda/lib/python2.7/site-packages/sklearn/cluster/k_means_.py:1273: RuntimeWarning: init_size=300 should be larger than k=26000. Setting it to 3*k
+  init_size=init_size)

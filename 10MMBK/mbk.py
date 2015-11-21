@@ -3,11 +3,11 @@ import numpy as np
 import yt
 import sklearn
 from sklearn.cluster import MiniBatchKMeans
-yt.funcs.mylog.setLevel(50)
 import sys
 for arg in sys.argv:
     k=arg
 k = int(k)
+yt.funcs.mylog.setLevel(50) #coerce output null
 print "{} clusters test".format(k)
 print "Loading Particle Data"
 ds = yt.load("../../ds14_scivis_0128_e4_dt04_1.0000")
