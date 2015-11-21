@@ -1,9 +1,0 @@
-#PBS -q regular
-#PBS -l mppwidth=48
-#PBS -l walltime=03:00:00
-#PBS -N 48_test
-#PBS -e sctest.$PBS_JOBID.err
-#PBS -o sctest.$PBS_JOBID.out
-#PBS -A m2218
-cd /project/projectdirs/astro250/doris/halo/halo_find/test48
-aprun -n 1 /global/homes/d/dorislee/anaconda/bin/python parallel_gs_dens_test.py
