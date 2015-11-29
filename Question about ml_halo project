@@ -1,0 +1,11 @@
+Question about ml_halo project
+
+0 What is the danger of nearby haloes "linking bridges"? Is it because it obscures the identification of subhaloes ?
+- What does it mean when a halo finding algorithm doesn't support "multiple particle masses"(e.g. Rockstar)
+- 6D phase space ---> what does that mean? what are the variables here? 
+- don't quite understand what the significance of the Vmax selection criterion is
+-  softenings of the runs are as follows:
+0256	50 kpc/h
+0512	25 kpc/h
+1024	15 kpc/h
+	What does that mean?
