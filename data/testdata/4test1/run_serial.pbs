@@ -1,0 +1,11 @@
+#PBS -q serial
+#PBS -l walltime=20:00:00
+#PBS -N 1000beyond
+#PBS -e 1000beyond.$PBS_JOBID.err
+#PBS -o 1000beyond.$PBS_JOBID.out
+#PBS -l vmem=20gb
+#PBS -l mem=20gb
+#PBS -A m2218
+export LD_LIBRARY_PATH=/global/homes/d/dorislee/anaconda/lib:$LD_LIBRARY_PATH
+cd /project/projectdirs/astro250/doris/halo/halo_find/4test1
+/global/homes/d/dorislee/anaconda/bin/python parallel_gs_dens_test.py
