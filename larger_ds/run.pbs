@@ -1,0 +1,10 @@
+#PBS -q debug 
+#PBS -l mppwidth=1
+#PBS -l walltime=00:30:00
+#PBS -N 20000000cluster
+#PBS -e $PBS_JOBNAME.$PBS_JOBID.err
+#PBS -o $PBS_JOBNAME.$PBS_JOBID.out
+#PBS -A m2218
+export LD_LIBRARY_PATH=/global/homes/d/dorislee/anaconda/lib:$LD_LIBRARY_PATH
+cd /project/projectdirs/astro250/doris/halo/halo_find/larger_ds
+aprun -n 1  /global/homes/d/dorislee/anaconda/bin/python mbk.py 20000000
