@@ -9,7 +9,7 @@ for arg in sys.argv:
 k = int(k)
 yt.funcs.mylog.setLevel(50) #coerce output null
 print "{} clusters test".format(k)
-num =1000000000
+num =100000000
 print "Loading {} Particles".format(num)
 from yt.utilities.sdf import load_sdf
 path = 'http://darksky.slac.stanford.edu/simulations/ds14_a/ds14_a_1.0000'
